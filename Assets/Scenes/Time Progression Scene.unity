@@ -138,7 +138,7 @@ GameObject:
   - component: {fileID: 392264403}
   - component: {fileID: 392264402}
   m_Layer: 0
-  m_Name: '[TimeProgressor]'
+  m_Name: '[DayProgressor]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -532,7 +532,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 797267522}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d112e1fb3cb69c04d83da60f42220ed4, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d4ec738ae5081c4a9c6f3b22d9244aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   introTimeline: {fileID: 11400000, guid: fcbe4f7452ba23f46bc4bbc5eea258c1, type: 2}
@@ -851,7 +851,7 @@ GameObject:
   - component: {fileID: 2023195702}
   - component: {fileID: 2023195701}
   m_Layer: 5
-  m_Name: Time Progression Canvas
+  m_Name: Day Progression Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

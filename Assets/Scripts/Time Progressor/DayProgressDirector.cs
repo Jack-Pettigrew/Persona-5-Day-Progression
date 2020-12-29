@@ -2,9 +2,9 @@
 using UnityEngine;
 using UnityEngine.Playables;
 
-namespace DD.TimeProgression
+namespace DD.DayProgression
 {
-    public class TimeProgressDirector : MonoBehaviour
+    public class DayProgressDirector : MonoBehaviour
     {
         // Director
         private PlayableDirector director;

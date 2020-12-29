@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace DD.TimeProgression
+namespace DD.DayProgression
 {
-    public class TimeProgressor : MonoBehaviour
+    public class DayProgressor : MonoBehaviour
     {
         [SerializeField]
-        private TimeProgressDirector director;
+        private DayProgressDirector director;
 
         // Coroutine
         private Coroutine completionCoroutine;
