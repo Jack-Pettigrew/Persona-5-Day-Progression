@@ -1860,7 +1860,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
-  m_Name: Days Progressing
+  m_Name: Time Progressing
   m_EditorClassIdentifier: 
   m_Version: 0
   m_Tracks:
@@ -1872,7 +1872,7 @@ MonoBehaviour:
   - {fileID: -6442302983119704214}
   - {fileID: 4801199080858994169}
   - {fileID: 5896450255680505168}
-  m_FixedDuration: 0
+  m_FixedDuration: 0.85
   m_EditorSettings:
     m_Framerate: 60
   m_DurationMode: 0
