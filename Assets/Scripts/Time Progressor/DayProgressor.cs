@@ -1,53 +1,76 @@
 ﻿using System.Collections;
 using UnityEngine;
+using DD.Scene;
 
 namespace DD.DayProgression
 {
     public class DayProgressor : MonoBehaviour
     {
-        [SerializeField]
-        private DayProgressDirector director;
+        // Components
+        [SerializeField] private DayProgressDirector dayDirector;
+        [SerializeField] private SceneLoader sceneLoader;
+
+        // Variables
+        public int testSceneToLoad;
+
+        [SerializeField] private float completionWaitDelay = 3.0f;
+        private bool animationFinished = false;
 
         // Coroutine
-        private Coroutine completionCoroutine;
+        private Coroutine progressionCoroutine = null;
 
         private void Awake()
         {
-            if(!director)
+            if(!dayDirector)
             {
                 Debug.LogError($"PlayableDirector has no reference on: {gameObject.name}");
             }
         }
 
-        // Start is called before the first frame update
         void Start()
         {
-            StartProgression();
+            StartProgression(testSceneToLoad);
         }
 
-        private void StartProgression()
+        private void StartProgression(int sceneIndex)
         {
-            // Tell SceneLoader to Async next scene
+            progressionCoroutine = StartCoroutine(ProgressionCoroutine(sceneIndex));
+        }
 
+        private IEnumerator ProgressionCoroutine(int sceneIndex)
+        {
             // Play while loading Async
-            director.PlayDirector();
-        }
+            animationFinished = false;
+            dayDirector.PlayDirector(delegate {
+                animationFinished = true;
+            });
 
-        private void CompleteProgression()
-        {
-            completionCoroutine = StartCoroutine(CompletionCoroutine());
-        }
+            sceneLoader.ManualLoadSceneAsync(sceneIndex, SceneTransitionType.Fade);
 
-        private IEnumerator CompletionCoroutine()
-        {
-            // Wait until SceneLoader has loaded the next scene
+            // ask to load > wait for load to finish
+            yield return new WaitUntil(() => sceneLoader.IsSceneLoaded == true);
 
-            // Fade out
-            
-            // Reset everything/Remove this scene (dependant on project requirements)
+            // wait for director to finish > ask to unload > complete
+            yield return new WaitUntil(() => animationFinished == true);
 
-            completionCoroutine = null;
+            // Wait for optional timer
+            yield return WaitTimer();
+
+            sceneLoader.ManualTransitionToLoadedSceneAsync();
+
+            progressionCoroutine = null;
             yield return null;
+        }
+
+        private IEnumerator WaitTimer()
+        {
+            float timer = completionWaitDelay;
+
+            while(timer > 0)
+            {
+                timer -= Time.deltaTime;
+                yield return null;
+            }
         }
     } 
 }

@@ -138,7 +138,7 @@ GameObject:
   - component: {fileID: 392264403}
   - component: {fileID: 392264402}
   m_Layer: 0
-  m_Name: '[DayProgressor]'
+  m_Name: '[Day Progressor]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -156,7 +156,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c4dea24138a6c647b30efb90ca3dfaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  director: {fileID: 797267525}
+  dayDirector: {fileID: 797267525}
+  sceneLoader: {fileID: 1626360815}
+  testSceneToLoad: 2
+  completionWaitDelay: 3
 --- !u!4 &392264403
 Transform:
   m_ObjectHideFlags: 0
@@ -169,7 +172,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &401959384
 GameObject:
@@ -732,7 +735,7 @@ GameObject:
   - component: {fileID: 1626360814}
   - component: {fileID: 1626360815}
   m_Layer: 0
-  m_Name: '[SceneLoader]'
+  m_Name: '[Scene Loader]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -750,7 +753,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1626360815
 MonoBehaviour:
