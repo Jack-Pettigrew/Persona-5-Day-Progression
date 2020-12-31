@@ -8,7 +8,7 @@ namespace DD.DayProgression
     {
         // Components
         [SerializeField] private DayProgressDirector dayDirector;
-        [SerializeField] private SceneLoader sceneLoader;
+        private SceneLoader sceneLoader;
 
         // Variables
         public int testSceneToLoad;
@@ -21,15 +21,17 @@ namespace DD.DayProgression
 
         private void Awake()
         {
-            if(!dayDirector)
+            if (!dayDirector)
             {
                 Debug.LogError($"PlayableDirector has no reference on: {gameObject.name}");
             }
+
+            sceneLoader = FindObjectOfType<SceneLoader>();
         }
 
-        void Start()
+        private void Start()
         {
-            StartProgression(testSceneToLoad);
+            //StartProgression(testSceneToLoad);
         }
 
         private void StartProgression(int sceneIndex)
@@ -48,7 +50,7 @@ namespace DD.DayProgression
             sceneLoader.ManualLoadSceneAsync(sceneIndex, SceneTransitionType.Fade);
 
             // ask to load > wait for load to finish
-            yield return new WaitUntil(() => sceneLoader.IsLoadingSceneReady == true);
+            yield return new WaitUntil(() => sceneLoader.hasSceneFinishedLoading == true);
 
             // wait for director to finish > ask to unload > complete
             yield return new WaitUntil(() => animationFinished == true);
@@ -59,7 +61,6 @@ namespace DD.DayProgression
             sceneLoader.ManualTransitionToLoadedSceneAsync();
 
             progressionCoroutine = null;
-            yield return null;
         }
 
         private IEnumerator WaitTimer()

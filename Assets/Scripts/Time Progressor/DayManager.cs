@@ -13,7 +13,7 @@ public class DayManager : MonoBehaviour
     {
         for (int i = 0; i < dayTexts.Length; i++)
         {
-            dayTexts[i].text = (i + 1).ToString();
+            dayTexts[i].text = (i + 12).ToString();
         }
     }
 }
