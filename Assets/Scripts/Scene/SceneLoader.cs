@@ -22,8 +22,16 @@ namespace DD.Scene
             get;
         }
 
+        public bool IsLoaderFinished
+        {
+            private set;
+            get;
+        }
         public bool IsLoadingSceneReady 
-        { private set; get; }
+        { 
+            private set; 
+            get; 
+        }
         public bool IsLoadedSceneActive
         {
             get { return LoadedScene == SceneManager.GetActiveScene(); }
@@ -47,7 +55,9 @@ namespace DD.Scene
         /// <param name="transitionType">The scene swap transition type.</param>
         public void ManualLoadSceneAsync(int buildIndex, SceneTransitionType transitionType)
         {
+            IsLoaderFinished = false;
             IsLoadingSceneReady = false;
+
             sceneTransitionType = transitionType;
             loadingCoroutine = StartCoroutine(AsyncSceneLoad(buildIndex));
         }
@@ -100,6 +110,8 @@ namespace DD.Scene
 
             SceneManager.SetActiveScene(LoadedScene);
             OnExitTransition.Invoke(sceneTransitionType);
+
+            IsLoaderFinished = true;
         }
 
         /// <summary>
