@@ -48,7 +48,7 @@ namespace DD.DayProgression
             sceneLoader.ManualLoadSceneAsync(sceneIndex, SceneTransitionType.Fade);
 
             // ask to load > wait for load to finish
-            yield return new WaitUntil(() => sceneLoader.IsSceneLoaded == true);
+            yield return new WaitUntil(() => sceneLoader.IsLoadingSceneReady == true);
 
             // wait for director to finish > ask to unload > complete
             yield return new WaitUntil(() => animationFinished == true);

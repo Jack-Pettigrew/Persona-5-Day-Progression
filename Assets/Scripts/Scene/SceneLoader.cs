@@ -21,12 +21,12 @@ namespace DD.Scene
             private set;
             get;
         }
-        public bool IsSceneLoaded { 
-            get { return loadingAsyncOperation?.progress >= 0.9f; }
-        }
+
+        public bool IsLoadingSceneReady 
+        { private set; get; }
         public bool IsLoadedSceneActive
         {
-            get { return loadingAsyncOperation?.progress >= 1.0f; }
+            get { return LoadedScene == SceneManager.GetActiveScene(); }
         }
 
         private SceneTransitionType sceneTransitionType = SceneTransitionType.None;
@@ -46,7 +46,8 @@ namespace DD.Scene
         /// <param name="buildIndex">The scene buildIndex.</param>
         /// <param name="transitionType">The scene swap transition type.</param>
         public void ManualLoadSceneAsync(int buildIndex, SceneTransitionType transitionType)
-        {        
+        {
+            IsLoadingSceneReady = false;
             sceneTransitionType = transitionType;
             loadingCoroutine = StartCoroutine(AsyncSceneLoad(buildIndex));
         }
@@ -74,6 +75,7 @@ namespace DD.Scene
             yield return WaitForCompleteOperation(0.9f, loadingAsyncOperation);
 
             LoadedScene = SceneManager.GetSceneByBuildIndex(buildIndex);
+            IsLoadingSceneReady = true;
         }
 
         /// <summary>
@@ -84,9 +86,17 @@ namespace DD.Scene
             // Activate loaded scene
             loadingAsyncOperation.allowSceneActivation = true;
 
-            // Begin Unload
-            unloadingAsyncOperation = SceneManager.UnloadSceneAsync(PreviousScene.buildIndex, UnloadSceneOptions.None);
-            yield return WaitForCompleteOperation(1.0f, unloadingAsyncOperation);
+            if(PreviousScene != gameObject.scene)
+            {
+                // Begin Unload
+                unloadingAsyncOperation = SceneManager.UnloadSceneAsync(PreviousScene.buildIndex, UnloadSceneOptions.None);
+                yield return WaitForCompleteOperation(1.0f, unloadingAsyncOperation);
+            }
+            else 
+            {
+                // Ensure scene activation has completed before setting
+                yield return null;
+            }
 
             SceneManager.SetActiveScene(LoadedScene);
             OnExitTransition.Invoke(sceneTransitionType);
