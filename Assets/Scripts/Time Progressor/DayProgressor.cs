@@ -12,6 +12,7 @@ namespace DD.DayProgression
 
         // Variables
         public int testSceneToLoad;
+        private int sceneIndexToTransition;
 
         [SerializeField] private float completionWaitDelay = 3.0f;
         private bool animationFinished = false;
@@ -29,29 +30,42 @@ namespace DD.DayProgression
             sceneLoader = FindObjectOfType<SceneLoader>();
         }
 
+        private void OnEnable()
+        {
+            SceneLoader.OnHasLoadedNewScene += StartTransitionToScene;
+        }
+
+        private void OnDisable()
+        {
+            SceneLoader.OnHasLoadedNewScene -= StartTransitionToScene;
+
+        }
+
         private void Start()
         {
-            //StartProgression(testSceneToLoad);
+            StartProgression(testSceneToLoad);
         }
 
         private void StartProgression(int sceneIndex)
         {
-            progressionCoroutine = StartCoroutine(ProgressionCoroutine(sceneIndex));
-        }
-
-        private IEnumerator ProgressionCoroutine(int sceneIndex)
-        {
+            sceneIndexToTransition = sceneIndex;
+            
             // Play while loading Async
             animationFinished = false;
             dayDirector.PlayDirector(delegate {
                 animationFinished = true;
             });
 
-            sceneLoader.ManualLoadSceneAsync(sceneIndex, SceneTransitionType.Fade);
+            sceneLoader.ManualLoadSceneAsync(sceneIndexToTransition, SceneTransitionType.Fade);
+        }
 
-            // ask to load > wait for load to finish
-            yield return new WaitUntil(() => sceneLoader.hasSceneFinishedLoading == true);
+        private void StartTransitionToScene(UnityEngine.SceneManagement.Scene scene)
+        {
+            progressionCoroutine = StartCoroutine(TransitionCoroutine());
+        }
 
+        private IEnumerator TransitionCoroutine()
+        {
             // wait for director to finish > ask to unload > complete
             yield return new WaitUntil(() => animationFinished == true);
 
