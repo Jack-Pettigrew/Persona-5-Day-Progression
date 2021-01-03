@@ -15,14 +15,14 @@ namespace DD.Scene
 
         private void OnEnable()
         {
-            //SceneLoader.OnEnterTransition += StartEnterTransition;
-            //SceneLoader.OnExitTransition += StartExitTransition;
+            SceneLoader.OnEnterTransition += StartEnterTransition;
+            SceneLoader.OnExitTransition += StartExitTransition;
         }
 
         private void OnDisable()
         {
-            //SceneLoader.OnEnterTransition -= StartEnterTransition;
-            //SceneLoader.OnExitTransition -= StartExitTransition;
+            SceneLoader.OnEnterTransition -= StartEnterTransition;
+            SceneLoader.OnExitTransition -= StartExitTransition;
         }
 
         private void StartEnterTransition(SceneTransitionType sceneTransitionType)
