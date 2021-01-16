@@ -65,16 +65,15 @@ namespace DD.Scene
         // TEST
         private void Start()
         {
-            AutoLoadSceneAysnc(dayProgressionScene, SceneTransitionType.None);
+            LoadSceneAysnc(dayProgressionScene, SceneTransitionType.None);
         }
 
-        // THESE METHODS ARE FOR INTERFACING WITH THE SCENELOADER
         /// <summary>
-        /// Automatically transition to loaded Scene when loading is complete.
+        /// Instantly begin loading and transition to given Scene as soon as it's ready.
         /// </summary>
         /// <param name="buildIndex">The scene buildIndex.</param>
         /// <param name="transitionType">The scene swap transition type.</param>
-        public void AutoLoadSceneAysnc(int buildIndex, SceneTransitionType transitionType)
+        public void LoadSceneAysnc(int buildIndex, SceneTransitionType transitionType)
         {
             if(!IsLoaderReady)  // Loader Busy Enqueue
             {
@@ -86,8 +85,12 @@ namespace DD.Scene
             }
         }
 
-        // THESE MEHTODS MANAGE WHEN LOADING AND UNLOADING HAPPENS (AUTOMATICALLY OR MANUALLY)
-
+        /// <summary>
+        /// The logic for handling loading and transitioning to the new scene.
+        /// </summary>
+        /// <param name="buildIndex">The scene to load.</param>
+        /// <param name="transitionType">The transition to use between scene loading.</param>
+        /// <returns></returns>
         private IEnumerator AutoAsyncLoad(int buildIndex, SceneTransitionType transitionType)
         {
             // Setup
@@ -127,7 +130,11 @@ namespace DD.Scene
             }
         }
 
-        // THESE METHODS ARE THE ACTUAL LOADING/UNLOADING LOGIC
+        /// <summary>
+        /// Loads the Scene (Only Loads).
+        /// </summary>
+        /// <param name="buildIndex">The scene to load.</param>
+        /// <returns></returns>
         private IEnumerator LoadScene(int buildIndex)
         {
             // Load
@@ -143,6 +150,10 @@ namespace DD.Scene
             Debug.Log("Loaded new scene.");
         }
 
+        /// <summary>
+        /// Transitions to the previously loaded scene (via LoadScene)
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator UnloadActiveScene()
         {
             if (PreviousScene.handle != 0)
@@ -159,7 +170,7 @@ namespace DD.Scene
         }
 
         /// <summary>
-        /// Wait until the supplied AsyncOperation progress has reached the supplied completionThreshold.
+        /// Wait until the given AsyncOperation has reached the completionThreshold.
         /// </summary>
         /// <param name="completionThreshold">The threshold to operation should reach.</param>
         /// <param name="operation">The AsyncOperation.</param>

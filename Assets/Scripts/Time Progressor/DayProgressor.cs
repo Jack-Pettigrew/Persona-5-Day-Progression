@@ -46,7 +46,7 @@ namespace DD.DayProgression
             // Wait for optional timer
             yield return WaitTimer();
 
-            sceneLoader.AutoLoadSceneAysnc(nextScene, SceneTransitionType.None);
+            sceneLoader.LoadSceneAysnc(nextScene, SceneTransitionType.None);
 
             progressionCoroutine = null;
         }
