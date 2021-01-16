@@ -11,11 +11,9 @@ namespace DD.DayProgression
         private SceneLoader sceneLoader;
 
         // Variables
-        public int testSceneToLoad;
-        private int sceneIndexToTransition;
+        public int nextScene;
 
         [SerializeField] private float completionWaitDelay = 3.0f;
-        private bool animationFinished = false;
 
         // Coroutine
         private Coroutine progressionCoroutine = null;
@@ -30,49 +28,25 @@ namespace DD.DayProgression
             sceneLoader = FindObjectOfType<SceneLoader>();
         }
 
-        private void OnEnable()
-        {
-            SceneLoader.OnHasLoadedNewScene += StartTransitionToScene;
-        }
-
-        private void OnDisable()
-        {
-            SceneLoader.OnHasLoadedNewScene -= StartTransitionToScene;
-
-        }
-
         private void Start()
         {
-            StartProgression(testSceneToLoad);
+            StartProgression();
         }
 
-        private void StartProgression(int sceneIndex)
-        {
-            sceneIndexToTransition = sceneIndex;
-            
+        private void StartProgression()
+        {            
             // Play while loading Async
-            animationFinished = false;
             dayDirector.PlayDirector(delegate {
-                animationFinished = true;
+                StartCoroutine(TransitionCoroutine());
             });
-
-            sceneLoader.ManualLoadSceneAsync(sceneIndexToTransition, SceneTransitionType.Fade);
-        }
-
-        private void StartTransitionToScene(UnityEngine.SceneManagement.Scene scene)
-        {
-            progressionCoroutine = StartCoroutine(TransitionCoroutine());
         }
 
         private IEnumerator TransitionCoroutine()
         {
-            // wait for director to finish > ask to unload > complete
-            yield return new WaitUntil(() => animationFinished == true);
-
             // Wait for optional timer
             yield return WaitTimer();
 
-            sceneLoader.ManualTransitionToLoadedSceneAsync();
+            sceneLoader.AutoLoadSceneAysnc(nextScene, SceneTransitionType.None);
 
             progressionCoroutine = null;
         }

@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dayDirector: {fileID: 797267525}
-  testSceneToLoad: 2
+  nextScene: 2
   completionWaitDelay: 3
 --- !u!4 &392264403
 Transform:

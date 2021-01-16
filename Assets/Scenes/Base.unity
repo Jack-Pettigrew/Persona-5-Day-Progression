@@ -138,6 +138,11 @@ PrefabInstance:
       propertyPath: testLoadScene
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6671438882809386178, guid: fb5035841c59bae42bb601e83666ab7c,
+        type: 3}
+      propertyPath: dayProgressionScene
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6671438882809386179, guid: fb5035841c59bae42bb601e83666ab7c,
         type: 3}
       propertyPath: m_RootOrder

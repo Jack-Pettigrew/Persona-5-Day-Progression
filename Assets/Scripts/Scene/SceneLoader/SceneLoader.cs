@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,9 +11,13 @@ namespace DD.Scene
     /// </summary>
     public class SceneLoader : MonoBehaviour
     {
+        // TEST
         public int dayProgressionScene;
 
         // Loader Variables
+        private SceneLoaderQueueItem currentLoaderItem = null;
+        private Queue<SceneLoaderQueueItem> loaderQueue = new Queue<SceneLoaderQueueItem>();
+
         public UnityEngine.SceneManagement.Scene PreviousScene
         {
             private set;
@@ -24,7 +29,7 @@ namespace DD.Scene
             get;
         }
 
-        private bool HasSceneFinishedLoading
+        private bool IsSceneLoadingComplete
         {
             set;
             get;
@@ -33,10 +38,12 @@ namespace DD.Scene
         {
             get { return LoadedScene == SceneManager.GetActiveScene(); }
         }
-        public bool IsLoaderFinished
+
+        private bool isLoaderReady = true;
+        public bool IsLoaderReady
         {
-            private set;
-            get;
+            private set { isLoaderReady = value; }
+            get { return isLoaderReady; }
         }
 
         private SceneTransitionType sceneTransitionType = SceneTransitionType.None;
@@ -61,25 +68,7 @@ namespace DD.Scene
             AutoLoadSceneAysnc(dayProgressionScene, SceneTransitionType.None);
         }
 
-        /// <summary>
-        /// Load a Scene asynchronously - This is manual scene loading meaning that the scene will be loaded, but will not swap until TransitionSceneManual is called. This means it is possible to have two scenes loaded at a time before transition is called.
-        /// </summary>
-        /// <param name="buildIndex">The scene buildIndex.</param>
-        /// <param name="transitionType">The scene swap transition type.</param>
-        public void ManualLoadSceneAsync(int buildIndex, SceneTransitionType transitionType)
-        {
-            sceneTransitionType = transitionType;
-            loadingCoroutine = StartCoroutine(AsyncSceneLoadManual(buildIndex));
-        }
-
-        /// <summary>
-        /// Manually transition to the new scene asynchronously. Will unload currently active scene and transition to the previously loaded new scene - use in conjunction with LoadSceneAsyncManual.
-        /// </summary>
-        public void ManualTransitionToLoadedSceneAsync()
-        {
-            StartCoroutine(AsyncUnloadSceneTransitionManual());
-        }
-
+        // THESE METHODS ARE FOR INTERFACING WITH THE SCENELOADER
         /// <summary>
         /// Automatically transition to loaded Scene when loading is complete.
         /// </summary>
@@ -87,17 +76,26 @@ namespace DD.Scene
         /// <param name="transitionType">The scene swap transition type.</param>
         public void AutoLoadSceneAysnc(int buildIndex, SceneTransitionType transitionType)
         {
-            sceneTransitionType = transitionType;
-            StartCoroutine(AutoAsyncLoad(buildIndex));
+            if(!IsLoaderReady)  // Loader Busy Enqueue
+            {
+                loaderQueue.Enqueue(new SceneLoaderQueueItem(buildIndex, transitionType));
+            }
+            else // otherwise just get on with it
+            {
+                StartCoroutine(AutoAsyncLoad(buildIndex, transitionType));
+            }
         }
 
-        private IEnumerator AutoAsyncLoad(int buildIndex)
+        // THESE MEHTODS MANAGE WHEN LOADING AND UNLOADING HAPPENS (AUTOMATICALLY OR MANUALLY)
+
+        private IEnumerator AutoAsyncLoad(int buildIndex, SceneTransitionType transitionType)
         {
             // Setup
-            IsLoaderFinished = false;
-            HasSceneFinishedLoading = false;
+            IsLoaderReady = false;
+            IsSceneLoadingComplete = false;
+            sceneTransitionType = transitionType;
             PreviousScene = LoadedScene;
-            //OnEnterTransition.Invoke(sceneTransitionType);
+                                                //OnEnterTransition.Invoke(sceneTransitionType);
             Debug.Log("Setup SceneLoader.");
 
             // Unload
@@ -114,47 +112,22 @@ namespace DD.Scene
             SceneManager.SetActiveScene(LoadedScene);
 
             // Finish
-            //OnExitTransition.Invoke(sceneTransitionType);
-            IsLoaderFinished = true;
+                                                //OnExitTransition.Invoke(sceneTransitionType);
+
+            if(loaderQueue.Count > 0)
+            {
+                Debug.Log($"LoaderQueue: Loading next queued Scene.");
+                currentLoaderItem = loaderQueue.Dequeue();
+                yield return AutoAsyncLoad(currentLoaderItem.sceneBuildIndex, currentLoaderItem.sceneTransitionType);
+            }
+            else
+            {
+                currentLoaderItem = null;
+                IsLoaderReady = true;
+            }
         }
 
-
-        /// <summary>
-        /// Asynchronous scene loading.
-        /// </summary>
-        /// <param name="buildIndex">sceneIndex of scene to load.</param>
-        private IEnumerator AsyncSceneLoadManual(int buildIndex)
-        {
-            // Setup
-            IsLoaderFinished = false;
-            HasSceneFinishedLoading = false;
-            PreviousScene = LoadedScene;
-            //OnEnterTransition.Invoke(sceneTransitionType);
-
-            // Load
-            yield return LoadScene(buildIndex);
-        }
-
-        /// <summary>
-        /// Asynchronous scene unloading.
-        /// </summary>
-        private IEnumerator AsyncUnloadSceneTransitionManual()
-        {
-            // Unload
-            yield return UnloadActiveScene();
-
-            // Activate new scene
-            Debug.Log("Allowing scene to activate.");
-            loadingAsyncOperation.allowSceneActivation = true;
-
-            yield return new WaitUntil(() => loadingAsyncOperation.isDone);
-            SceneManager.SetActiveScene(LoadedScene);
-
-            // Finish
-            //OnExitTransition.Invoke(sceneTransitionType);
-            IsLoaderFinished = true;
-        }
-
+        // THESE METHODS ARE THE ACTUAL LOADING/UNLOADING LOGIC
         private IEnumerator LoadScene(int buildIndex)
         {
             // Load
@@ -165,7 +138,7 @@ namespace DD.Scene
             yield return WaitForCompleteOperation(0.9f, loadingAsyncOperation);
 
             LoadedScene = SceneManager.GetSceneByBuildIndex(buildIndex);
-            HasSceneFinishedLoading = true;
+            IsSceneLoadingComplete = true;
             OnHasLoadedNewScene.Invoke(LoadedScene);
             Debug.Log("Loaded new scene.");
         }
