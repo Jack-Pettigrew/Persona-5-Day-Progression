@@ -9,8 +9,6 @@ namespace DD.Scene
         [SerializeField] private float transitionSpeed = 1.0f;
         [SerializeField] private RawImage transitionImage;
 
-        private Coroutine transitionCoroutine = null;
-
         public IEnumerator StartTransitionEnter(SceneTransitionType sceneTransitionType)
         {
             switch (sceneTransitionType)
@@ -63,8 +61,6 @@ namespace DD.Scene
 
                 yield return null;
             }
-
-            transitionCoroutine = null;
         }
     }
 

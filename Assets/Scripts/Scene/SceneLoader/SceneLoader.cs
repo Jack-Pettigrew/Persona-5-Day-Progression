@@ -29,11 +29,6 @@ namespace DD.Scene
             get;
         }
 
-        private bool IsSceneLoadingComplete
-        {
-            set;
-            get;
-        }
         public bool IsLoadedSceneActive
         {
             get { return LoadedScene == SceneManager.GetActiveScene(); }
@@ -46,16 +41,14 @@ namespace DD.Scene
             get { return isLoaderReady; }
         }
 
-        private SceneTransitionType sceneTransitionType = SceneTransitionType.None;
-
         // Loading Operations
         private Coroutine loadingCoroutine = null;
         private AsyncOperation loadingAsyncOperation = null;
         private AsyncOperation unloadingAsyncOperation = null;
 
         // Loader Events
-        public static Action<UnityEngine.SceneManagement.Scene> OnHasLoadedNewScene = delegate { };
         public static Action<UnityEngine.SceneManagement.Scene> OnHasUnloadedScene = delegate { };
+        public static Action<UnityEngine.SceneManagement.Scene> OnHasLoadedNewScene = delegate { };
         public static Action OnSceneLoaderFinished = delegate { };
 
         [SerializeField]
@@ -94,8 +87,6 @@ namespace DD.Scene
         {
             // Setup
             IsLoaderReady = false;
-            IsSceneLoadingComplete = false;
-            sceneTransitionType = transitionType;
             PreviousScene = LoadedScene;
             Debug.Log("Setup SceneLoader.");
 
@@ -145,7 +136,6 @@ namespace DD.Scene
             yield return WaitForCompleteOperation(0.9f, loadingAsyncOperation);
 
             LoadedScene = SceneManager.GetSceneByBuildIndex(buildIndex);
-            IsSceneLoadingComplete = true;
             OnHasLoadedNewScene.Invoke(LoadedScene);
             Debug.Log("Loaded new scene.");
         }

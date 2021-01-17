@@ -12,11 +12,7 @@ namespace DD.DayProgression
 
         // Variables
         public int nextScene;
-
         [SerializeField] private float completionWaitDelay = 3.0f;
-
-        // Coroutine
-        private Coroutine progressionCoroutine = null;
 
         private void Awake()
         {
@@ -47,8 +43,6 @@ namespace DD.DayProgression
             yield return WaitTimer();
 
             sceneLoader.LoadSceneAysnc(nextScene, SceneTransitionType.Fade);
-
-            progressionCoroutine = null;
         }
 
         private IEnumerator WaitTimer()
