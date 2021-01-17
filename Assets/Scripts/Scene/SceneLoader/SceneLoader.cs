@@ -58,14 +58,13 @@ namespace DD.Scene
         public static Action<UnityEngine.SceneManagement.Scene> OnHasUnloadedScene = delegate { };
         public static Action OnSceneLoaderFinished = delegate { };
 
-        // Transition Events
-        public static Action<SceneTransitionType> OnEnterTransition = delegate { };
-        public static Action<SceneTransitionType> OnExitTransition = delegate { };
+        [SerializeField]
+        private SceneLoaderUITransitioner sceneLoaderUITransitioner = null;
 
         // TEST
         private void Start()
         {
-            LoadSceneAysnc(dayProgressionScene, SceneTransitionType.None);
+            LoadSceneAysnc(dayProgressionScene, SceneTransitionType.Fade);
         }
 
         /// <summary>
@@ -75,7 +74,7 @@ namespace DD.Scene
         /// <param name="transitionType">The scene swap transition type.</param>
         public void LoadSceneAysnc(int buildIndex, SceneTransitionType transitionType)
         {
-            if(!IsLoaderReady)  // Loader Busy Enqueue
+            if (!IsLoaderReady)  // Loader Busy Enqueue
             {
                 loaderQueue.Enqueue(new SceneLoaderQueueItem(buildIndex, transitionType));
             }
@@ -98,8 +97,9 @@ namespace DD.Scene
             IsSceneLoadingComplete = false;
             sceneTransitionType = transitionType;
             PreviousScene = LoadedScene;
-                                                //OnEnterTransition.Invoke(sceneTransitionType);
             Debug.Log("Setup SceneLoader.");
+
+            yield return sceneLoaderUITransitioner.StartTransitionEnter(transitionType);
 
             // Unload
             yield return UnloadActiveScene();
@@ -115,9 +115,9 @@ namespace DD.Scene
             SceneManager.SetActiveScene(LoadedScene);
 
             // Finish
-                                                //OnExitTransition.Invoke(sceneTransitionType);
+            yield return sceneLoaderUITransitioner.StartTransitionExit(transitionType);
 
-            if(loaderQueue.Count > 0)
+            if (loaderQueue.Count > 0)
             {
                 Debug.Log($"LoaderQueue: Loading next queued Scene.");
                 currentLoaderItem = loaderQueue.Dequeue();
@@ -182,6 +182,4 @@ namespace DD.Scene
             }
         }
     }
-
-    public enum SceneTransitionType { None, Fade };
 }

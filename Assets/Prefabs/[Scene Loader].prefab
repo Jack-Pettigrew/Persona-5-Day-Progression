@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4397bb77de3b0bf4a84eb3d58468148b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dayProgressionScene: 0
+  sceneLoaderUITransitioner: {fileID: 8077337750674128278}
 --- !u!1 &6671438883225656019
 GameObject:
   m_ObjectHideFlags: 0
@@ -156,7 +158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e610a58156c3e4844bc4e1af9484d559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transitionSpeed: 1
+  transitionSpeed: 3
   transitionImage: {fileID: 6671438883740695690}
 --- !u!1 &6671438883740695688
 GameObject:
