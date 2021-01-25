@@ -14,10 +14,7 @@ namespace DD.Scene
         // TEST
         public int dayProgressionScene;
 
-        // Loader Variables
-        private SceneLoaderQueueItem currentLoaderItem = null;
-        private Queue<SceneLoaderQueueItem> loaderQueue = new Queue<SceneLoaderQueueItem>();
-
+        // Current State
         public UnityEngine.SceneManagement.Scene PreviousScene
         {
             private set;
@@ -34,25 +31,27 @@ namespace DD.Scene
             get { return LoadedScene == SceneManager.GetActiveScene(); }
         }
 
+        #region IsLoaderReady
         private bool isLoaderReady = true;
         public bool IsLoaderReady
         {
             private set { isLoaderReady = value; }
             get { return isLoaderReady; }
         }
+        #endregion
+
+        // Loading Queue
+        private SceneLoaderQueueItem currentLoaderItem = null;
+        private Queue<SceneLoaderQueueItem> loaderQueue = new Queue<SceneLoaderQueueItem>();
 
         // Loading Operations
         private Coroutine loadingCoroutine = null;
         private AsyncOperation loadingAsyncOperation = null;
         private AsyncOperation unloadingAsyncOperation = null;
 
-        // Loader Events
-        public static Action<UnityEngine.SceneManagement.Scene> OnHasUnloadedScene = delegate { };
-        public static Action<UnityEngine.SceneManagement.Scene> OnHasLoadedNewScene = delegate { };
-        public static Action OnSceneLoaderFinished = delegate { };
+        // UI Transitioner
+        [SerializeField] private SceneLoaderUITransitioner sceneLoaderUITransitioner = null;
 
-        [SerializeField]
-        private SceneLoaderUITransitioner sceneLoaderUITransitioner = null;
 
         // TEST
         private void Start()
@@ -60,6 +59,7 @@ namespace DD.Scene
             LoadSceneAysnc(dayProgressionScene, SceneTransitionType.Fade);
         }
 
+        #region Auto Loading
         /// <summary>
         /// Instantly begin loading and transition to given Scene as soon as it's ready.
         /// </summary>
@@ -108,6 +108,7 @@ namespace DD.Scene
             // Finish
             yield return sceneLoaderUITransitioner.StartTransitionExit(transitionType);
 
+            // Finish Queue
             if (loaderQueue.Count > 0)
             {
                 Debug.Log($"LoaderQueue: Loading next queued Scene.");
@@ -120,7 +121,9 @@ namespace DD.Scene
                 IsLoaderReady = true;
             }
         }
+        #endregion
 
+        #region Loading Logic
         /// <summary>
         /// Loads the Scene (Only Loads).
         /// </summary>
@@ -135,9 +138,8 @@ namespace DD.Scene
 
             yield return WaitForCompleteOperation(0.9f, loadingAsyncOperation);
 
-            LoadedScene = SceneManager.GetSceneByBuildIndex(buildIndex);
-            OnHasLoadedNewScene.Invoke(LoadedScene);
             Debug.Log("Loaded new scene.");
+            LoadedScene = SceneManager.GetSceneByBuildIndex(buildIndex);
         }
 
         /// <summary>
@@ -154,7 +156,6 @@ namespace DD.Scene
 
                 yield return WaitForCompleteOperation(1.0f, unloadingAsyncOperation);
 
-                OnHasUnloadedScene.Invoke(PreviousScene);
                 Debug.Log("Unloaded scene.");
             }
         }
@@ -171,5 +172,6 @@ namespace DD.Scene
                 yield return null;
             }
         }
+        #endregion
     }
 }
