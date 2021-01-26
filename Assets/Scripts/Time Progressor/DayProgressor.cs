@@ -13,6 +13,7 @@ namespace DD.DayProgression
         // Variables
         public int nextScene;
         [SerializeField] private float completionWaitDelay = 3.0f;
+        private SceneLoadHandle loadHandle = null;
 
         private void Awake()
         {
@@ -30,7 +31,9 @@ namespace DD.DayProgression
         }
 
         private void StartProgression()
-        {            
+        {
+            loadHandle = sceneLoader.LoadSceneManual(nextScene, SceneTransitionType.Fade);
+
             // Play while loading Async
             dayDirector.PlayDirector(delegate {
                 StartCoroutine(TransitionCoroutine());
@@ -42,7 +45,9 @@ namespace DD.DayProgression
             // Wait for optional timer
             yield return WaitTimer();
 
-            sceneLoader.LoadSceneAysnc(nextScene, SceneTransitionType.Fade);
+            loadHandle.canSceneActivate = true;
+
+            //sceneLoader.LoadSceneAuto(nextScene, SceneTransitionType.Fade);
         }
 
         private IEnumerator WaitTimer()
