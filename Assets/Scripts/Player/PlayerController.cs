@@ -7,11 +7,12 @@ public class PlayerController : MonoBehaviour
 {
     // COMPONENTS
     private CharacterController controller;
+    [SerializeField] private CameraController camera;
 
     // PHYSICS
     [Header("Physics")]
     [SerializeField] private float characterSpeed = 2.5f;
-    private Vector2 input;
+    private Vector3 inputDir;
     private Vector3 velocity = Vector3.zero;
 
     private float yVelocity = 0;
@@ -21,15 +22,15 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+
+        if (camera == null)
+            camera = FindObjectOfType<CameraController>();
     }
 
     private void Update()
     {
         // Input
-        input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
-        input *= characterSpeed;
-
-        // Input: Account for Camera
+        inputDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
 
         // Gravity
         if (controller.isGrounded)
@@ -42,7 +43,8 @@ public class PlayerController : MonoBehaviour
         }
 
         // Move
-        velocity.x = input.x; velocity.z = input.y;
+        velocity.x = inputDir.x; 
+        velocity.z = inputDir.z;
         velocity *= (characterSpeed * Time.deltaTime);
         velocity.y = yVelocity;
 

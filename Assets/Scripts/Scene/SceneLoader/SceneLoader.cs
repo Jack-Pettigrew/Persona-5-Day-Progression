@@ -106,13 +106,12 @@ namespace DD.Scene
             yield return new WaitUntil(() => currentLoaderItem.loadHandle.canSceneActivate == true);
 
             yield return sceneLoaderUITransitioner.StartTransitionEnter(currentLoaderItem.sceneTransitionType);
-
+            
             /*  AsyncOperations will stall if allowsceneactivation = false.
              *  Work Around to avoid duplicate objects: 
              *      - Delete old scene GameObjects > activate new scene > unload old scene
-             *      - Better way than LINQ?
+             *      - Better workaround than LINQ? (LINQ creates unnecessary performance OH and GC)
              */
-            
             SceneManager.GetSceneByBuildIndex(PreviousSceneIndex).GetRootGameObjects().ToList().ForEach((x) => Destroy(x));
 
             yield return ActivateLoadedScene();
@@ -205,7 +204,7 @@ namespace DD.Scene
         }
 
         /// <summary>
-        /// Handles any items in the Queue 
+        /// Handles any remaining items in the Queue 
         /// </summary>
         private void HandleQueue()
         {
