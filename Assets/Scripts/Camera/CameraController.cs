@@ -61,7 +61,8 @@ public class CameraController : MonoBehaviour
     {
         inScenicMode = false;
 
-        // Move behind the player
+        ResetRotation();
+        // Lerp behind the player
 
         if (transitionCoroutine != null)
             StopCoroutine(transitionCoroutine);
@@ -81,8 +82,6 @@ public class CameraController : MonoBehaviour
 
             posDist = Vector3.Distance(transform.position, position);
             rotDiff = Quaternion.Angle(transform.rotation, rotation);
-
-            Debug.Log(rotDiff);
 
             yield return null;
         }

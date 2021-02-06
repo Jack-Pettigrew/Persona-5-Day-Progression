@@ -32,8 +32,6 @@ namespace DD.DayProgression
 
         private void StartProgression()
         {
-            loadHandle = sceneLoader.LoadSceneManual(nextScene, SceneTransitionType.Fade);
-
             // Play while loading Async
             dayDirector.PlayDirector(delegate {
                 StartCoroutine(TransitionCoroutine());
@@ -45,9 +43,7 @@ namespace DD.DayProgression
             // Wait for optional timer
             yield return WaitTimer();
 
-            loadHandle.canSceneActivate = true;
-
-            //sceneLoader.LoadSceneAuto(nextScene, SceneTransitionType.Fade);
+            sceneLoader.LoadSceneAuto(nextScene, SceneTransitionType.Fade);
         }
 
         private IEnumerator WaitTimer()

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -179,7 +178,7 @@ namespace DD.Scene
         /// </summary>
         private IEnumerator UnloadScene(int sceneBuildIndex)
         {
-            if (sceneBuildIndex == 0 || !SceneManager.GetSceneByBuildIndex(sceneBuildIndex).isLoaded)               // sceneBuildIndex == 0 MIGHT PISS YOU OFF LATER
+            if (sceneBuildIndex == 0 || !SceneManager.GetSceneByBuildIndex(sceneBuildIndex).isLoaded) // sceneBuildIndex == 0 MIGHT PISS YOU OFF LATER
                 yield break;
 
             Debug.Log($"Unloading current scene: {sceneBuildIndex}...");
