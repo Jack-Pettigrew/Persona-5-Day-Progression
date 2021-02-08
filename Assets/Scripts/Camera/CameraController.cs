@@ -35,7 +35,8 @@ public class CameraController : MonoBehaviour
 
     private void ResetRotation()
     {
-        pitch = yaw = 0;
+        pitch = 0;
+        yaw = cameraTarget.eulerAngles.y;
     }
 
     private void ControlCamera()
