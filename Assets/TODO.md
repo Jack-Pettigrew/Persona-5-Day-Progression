@@ -6,7 +6,7 @@
 - [Gameplay](#gameplay)
 
 # Gameplay
-- [ ] Camera relative move change when inputDir changes
+- [x] Camera relative move change when inputDir changes
+- [x] Non-instant camera-relative movement from scenic to gameplay view (DONE, CLEAN UP CODE)
 - [ ] Character Jump
-- [ ] On ToPlayView camera is positions behind the player's current heading direction
 

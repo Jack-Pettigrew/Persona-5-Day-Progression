@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -18,6 +18,9 @@ public class CameraController : MonoBehaviour
     // Controller Values
     private float pitch, yaw;
     Vector3 targetRot = Vector3.zero;
+
+    // Event
+    public Action OnViewChange = delegate { };
 
     private void Start()
     {
@@ -44,7 +47,6 @@ public class CameraController : MonoBehaviour
         yaw += Input.GetAxis("Mouse X");
         pitch += Input.GetAxis("Mouse Y");
 
-        // Camera to play position
         targetRot = new Vector3(-pitch, yaw, 0);
         transform.eulerAngles = targetRot;
 
@@ -56,17 +58,20 @@ public class CameraController : MonoBehaviour
         inScenicMode = true;
 
         transitionCoroutine = StartCoroutine(MoveTo(position, Quaternion.Euler(rotation)));
+
+        OnViewChange.Invoke();
     }
 
     public void SwapToPlayView()
     {
-        inScenicMode = false;
-
-        ResetRotation();
-        // Lerp behind the player
+        OnViewChange.Invoke();
 
         if (transitionCoroutine != null)
             StopCoroutine(transitionCoroutine);
+
+        ResetRotation();
+
+        inScenicMode = false;
     }
 
     private IEnumerator MoveTo(Vector3 position, Quaternion rotation)

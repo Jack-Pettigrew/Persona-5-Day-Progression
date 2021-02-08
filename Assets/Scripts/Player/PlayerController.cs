@@ -8,9 +8,8 @@ public class PlayerController : MonoBehaviour
     // COMPONENTS
     private CharacterController controller;
     [SerializeField] private CameraController camController;
-    private Transform cameraTransform = null;
 
-    // PHYSICS
+    // LOCOMOTION
     [Header("Locomotion")]
     [SerializeField] private float moveSpeed = 2.5f;
     private Vector3 inputDir;
@@ -19,6 +18,13 @@ public class PlayerController : MonoBehaviour
     private float turnSmoothing = 0;
     [SerializeField] private float turnSpeed = 0;
 
+    // CAMERA RELATIVE
+    [SerializeField] private float changeMoveRelativityThreshold = 5.0f;
+    private float cameraRelativeMoveAngle = 0;
+    private bool updateCameraMovementRelativity = true;
+    private Coroutine relativeMoveCoroutine = null;
+
+    // PHYSICS
     private float yVelocity = 0;
     [SerializeField] private float groundedGravity = -0.02f;
     private float gravity = Physics.gravity.y;
@@ -30,8 +36,17 @@ public class PlayerController : MonoBehaviour
         if (camController == null)
         {
             camController = FindObjectOfType<CameraController>();
-            cameraTransform = camController.transform;
         }
+    }
+
+    private void OnEnable()
+    {
+        camController.OnViewChange += ChangeMovementRelativity;
+    }
+
+    private void OnDisable()
+    {
+        camController.OnViewChange -= ChangeMovementRelativity;
     }
 
     private void Update()
@@ -41,7 +56,9 @@ public class PlayerController : MonoBehaviour
 
         if(inputDir.sqrMagnitude > 0)
         {
-            float targetAngle = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+            cameraRelativeMoveAngle = updateCameraMovementRelativity ? camController.transform.eulerAngles.y : cameraRelativeMoveAngle;
+
+            float targetAngle = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg + cameraRelativeMoveAngle;
             transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothing, turnSpeed);
         }
 
@@ -60,10 +77,38 @@ public class PlayerController : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
+    /// <summary>
+    /// Starts the movement relativity change process (an associated coroutine).
+    /// </summary>
+    private void ChangeMovementRelativity()
+    {
+        relativeMoveCoroutine = StartCoroutine(WaitForInputDirChange());
+    }
+
+    /// <summary>
+    /// Waits for the player's inputDir to change by the changeMoveRelativityThreshold (coroutine must be explicitly stopped otherwise).
+    /// </summary>
+    private IEnumerator WaitForInputDirChange()
+    {
+        updateCameraMovementRelativity = false;
+        Vector3 onChangeInputDir = inputDir;
+
+        while(!updateCameraMovementRelativity)
+        {
+            if(Vector3.Angle(onChangeInputDir, inputDir) > changeMoveRelativityThreshold 
+                || inputDir == Vector3.zero)
+            {
+                updateCameraMovementRelativity = true;
+            }
+
+            yield return null;
+        }
+
+        relativeMoveCoroutine = null;
+    }
+
     /*
      * TODO:
-     * Camera relative move change when inputDir changes
      * Jump
-     * On ToPlayView camera is positions behind the player's current heading direction
      */
 }
