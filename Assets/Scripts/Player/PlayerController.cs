@@ -29,6 +29,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float groundedGravity = -0.02f;
     private float gravity = Physics.gravity.y;
 
+    // ANIMATION
+    [SerializeField] private Animator animator = null;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -75,6 +78,8 @@ public class PlayerController : MonoBehaviour
         // Move
         velocity = (transform.forward * inputDir.magnitude * moveSpeed) + Vector3.up * yVelocity;
         controller.Move(velocity * Time.deltaTime);
+
+        animator.SetFloat("Speed", inputDir.magnitude);
     }
 
     /// <summary>
