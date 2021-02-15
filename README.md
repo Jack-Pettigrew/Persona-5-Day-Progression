@@ -12,6 +12,8 @@ A recreation of Persona 5's Day Progression, queueable scene loading system and 
 - Character controller
 - Dynamic gameplay-sceneic view changes
 
+Watch the video [here](https://www.youtube.com/watch?v=0d4GKrTTbPA)!
+
 ## Resources
 
 Persona 5 UI Images: Atlus, Persona 5
