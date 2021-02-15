@@ -1,4 +1,4 @@
-# Persona-5-Time-Progression
+# Persona-5-Day-Progression
 
 ![Respoistory Header](https://github.com/Jack-Pettigrew/Persona-5-Time-Progression/blob/main/GitHub%20Images/GitHub%20Header.jpg "Persona 5 Day Progressor Header")
 
