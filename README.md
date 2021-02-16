@@ -1,6 +1,6 @@
 # Persona-5-Day-Progression
 
-![Respoistory Header](https://github.com/Jack-Pettigrew/Persona-5-Time-Progression/blob/main/GitHub%20Images/GitHub%20Header.jpg "Persona 5 Day Progressor Header")
+![Respoistory Header](https://github.com/Jack-Pettigrew/GitHub-Images/blob/main/Persona%205%20Day%20Progressor%20Header.jpg "Persona 5 Day Progressor Header")
 
 A recreation of Persona 5's Day Progression, queueable scene loading system and basic character controller with dynamic gameplay-scenic view changing.
 
